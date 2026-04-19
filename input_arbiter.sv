@@ -31,7 +31,7 @@ module input_arbiter (
         end else if (cpu_req_valid) begin
             win_req       = cpu_req;
             win_valid     = 1'b1;
-            cpu_req_ready = win_ready;
+            cpu_req_ready = win_ready;  //used when mshr and write buffer become full
         end
     end
  
