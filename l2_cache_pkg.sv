@@ -1,10 +1,18 @@
-package l2_cache_pkg;
- 
-    typedef struct packed {
-        logic [31:0]    addr;
-        logic [1023:0]  data;
-        logic [127:0]   strobe;   
-        logic  write;
+Package l2_cache_pkg;
+
+    // Request packet from Arbiter/CPU/MSHR
+    Typedef struct packed {
+        Logic [31:0]    addr;
+        Logic [1023:0]  data;
+        Logic [127:0]   strobe;   
+        Logic           write;
     } cache_req_t;
- 
-endpackage
+
+    // Metadata packet for Tag RAM storage
+    Typedef struct packed {
+        Logic [17:0] tag;
+        Logic        valid;
+        Logic        dirty;
+    } cache_meta_t;
+
+Endpackage
