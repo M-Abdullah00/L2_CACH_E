@@ -1,6 +1,4 @@
-//==============================================================================
 // tag_ram.sv 
-//==============================================================================
 import l2_cache_pkg::*;
 
 module tag_ram (
@@ -24,17 +22,13 @@ module tag_ram (
     // Storage: 128 sets, each containing 4 way-structs
     cache_meta_t mem [128][4];
 
-    //--------------------------------------------------------------------------
     // Combinational Read (Stage 1)
-    //--------------------------------------------------------------------------
     assign rd_meta_w0 = mem[rd_index][0];
     assign rd_meta_w1 = mem[rd_index][1];
     assign rd_meta_w2 = mem[rd_index][2];
     assign rd_meta_w3 = mem[rd_index][3];
 
-    //--------------------------------------------------------------------------
     // Synchronous Update (Stage 3)
-    //--------------------------------------------------------------------------
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             for (int s = 0; s < 128; s++) begin
