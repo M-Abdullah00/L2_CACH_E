@@ -1,6 +1,6 @@
 import l2_cache_pkg::*;
 
-module mshr_4entry (
+module mshr (
     input  logic           clk,
     input  logic           rst_n,
 
@@ -37,7 +37,7 @@ module mshr_4entry (
     cache_req_t  [3:0] entry_req;
     logic [1023:0] [3:0] fetched_data;
 
-    // --- Status & Stall Logic ---
+    // Status & Stall Logic
     logic [2:0] active_count;
     always_comb begin
         active_count = 0;
