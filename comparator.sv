@@ -1,12 +1,12 @@
-// comparator.sv — Stage 3 Hit Detection (Binary Optimized)
+// comparator.sv
 
 import l2_cache_pkg::*;
 
 module comparator (
-    // Tag from the current request (passed from Stage 1/2)
+    // Tag from the current request
     input  logic [17:0]  req_tag,     
 
-    // Metadata from all 4 ways (read in Stage 1)
+    // Metadata from all 4 ways 
     input  cache_meta_t  meta_w0, 
     input  cache_meta_t  meta_w1, 
     input  cache_meta_t  meta_w2, 
