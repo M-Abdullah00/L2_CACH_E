@@ -1,6 +1,6 @@
 import l2_cache_pkg::*;
 
-module write_buffer_separate (
+module write_buffer (
     input  logic           clk,
     input  logic           rst_n,
 
@@ -29,7 +29,7 @@ module write_buffer_separate (
   assign wb_ready = (count < 3'd4);
     logic empty     = (count == 3'd0);
 
-    // --- FIFO Push Logic ---
+    // FIFO Push Logic 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             wr_ptr <= '0;
@@ -57,7 +57,7 @@ module write_buffer_separate (
         end
     end
 
-    // --- Separate Channel State Machine ---
+    // Separate Channel State Machine
     typedef enum logic [1:0] { IDLE, TRANSFERRING, WAIT_RESPONSE } state_t;
     state_t state;
 
