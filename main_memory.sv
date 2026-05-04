@@ -10,6 +10,8 @@ module main_memory (
     output logic           w_axi_awready,
 
     input  logic [1023:0]  w_axi_wdata,
+    input  logic [127:0]   w_axi_wstrb, 
+    input  logic           w_axi_wlast, 
     input  logic           w_axi_wvalid,
     output logic           w_axi_wready,
 
@@ -26,13 +28,10 @@ module main_memory (
     input  logic           r_axi_rready
 );
 
-    // 1MB Memory depth (Adjustable) - Array of 1024-bit lines
-    // 32-bit address is byte-addressed, so we ignore the lower 7 bits (offset)
+    // 1MB Memory depth (8192 lines * 128 bytes)
     logic [1023:0] mem [8192]; 
 
-    // Internal registers to hold address during handshake
     logic [31:0] current_awaddr;
-    logic [31:0] current_araddr;
 
     // Write Channel Logic
     typedef enum logic [1:0] {W_IDLE, W_WAIT_DATA, W_RESP} w_state_t;
@@ -59,7 +58,7 @@ module main_memory (
 
                 W_WAIT_DATA: begin
                     if (w_axi_wvalid && w_axi_wready) begin
-                        // Memory Write: Use bits [19:7] to index our line array
+                        // Map the 32-bit address to the 8192-line array by dropping the 7 offset bits
                         mem[current_awaddr[19:7]] <= w_axi_wdata; 
                         w_axi_wready <= 1'b0;
                         w_axi_bvalid <= 1'b1;
@@ -80,7 +79,7 @@ module main_memory (
         end
     end
 
-    // Read Channel Logic
+    // Read Channel Logic 
     typedef enum logic [1:0] {R_IDLE, R_DATA} r_state_t;
     r_state_t r_state;
 
@@ -94,16 +93,15 @@ module main_memory (
             case (r_state)
                 R_IDLE: begin
                     if (r_axi_arvalid && r_axi_arready) begin
-                        current_araddr <= r_axi_araddr;
-                        r_axi_arready  <= 1'b0;
-                        r_state        <= R_DATA;
+                        r_axi_rdata   <= mem[r_axi_araddr[19:7]];
+                        r_axi_rvalid  <= 1'b1;
+                        
+                        r_axi_arready <= 1'b0;
+                        r_state       <= R_DATA;
                     end
                 end
 
                 R_DATA: begin
-                    
-                    r_axi_rdata  <= mem[current_araddr[19:7]];
-                    r_axi_rvalid <= 1'b1;
                     if (r_axi_rvalid && r_axi_rready) begin
                         r_axi_rvalid  <= 1'b0;
                         r_axi_arready <= 1'b1;
